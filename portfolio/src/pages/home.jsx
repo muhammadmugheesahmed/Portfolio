@@ -4,6 +4,7 @@ import { FaCheck,FaCode,FaGlobe,FaDatabase,FaTools,FaDownload,FaPhone} from 'rea
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope,FaChartBar,FaFilePdf} from 'react-icons/fa';
 import { FaHexagonNodes } from 'react-icons/fa6';
 import Footer from '../components/Footer';
+
 // 1. Dedicated Home Capsule Sub-Navigation
 const HomeSubNav = () => {
   const sections = [
@@ -72,12 +73,6 @@ export default function Home() {
   }, []);
 
 
-  // const openPDF = (pdfUrl) => {
-  // const newWindow = window.open();
-  // newWindow.opener = null;
-  // newWindow.location = pdfUrl;
-  // };
-
 
   return (
     <div className="home-root-container">
@@ -96,7 +91,7 @@ export default function Home() {
         </div><br/><br/><br/><br/><br/><br/>
 
         <div className="hero-buttons">
-              <a href="/Mughees_resume.pdf" className="btn" target="_blank" rel="noopener noreferrer">
+              <a href={import.meta.env.BASE_URL + 'Mughees_resume.pdf'} className="btn" target="_blank" rel="noopener noreferrer">
                 <FaDownload /><span style={{marginLeft:'15px'}}> Download Resume</span>
               </a>
               <a href="#contact" className="btn btn-outline"><FaPhone /><span style={{marginLeft:'15px'}}> Contact Me</span></a>
@@ -123,7 +118,7 @@ export default function Home() {
       {/* Right Column: Profile Image Container */}
       <div className="about-image-wrapper">
         <img 
-          src="/images/portfolio_picture.jpeg" // <-- Replace with your actual image path
+          src={import.meta.env.BASE_URL + 'assets/portfolio_picture.jpeg'}
           alt="M Mughees Ahmed" 
           className="about-profile-img"
         />

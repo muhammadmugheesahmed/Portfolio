@@ -3,11 +3,20 @@ import { MessageSquare, User, Briefcase, Send, Loader2, Mail, Building } from 'l
 import './recommendation.css';
 import './Pages.css';
 import Footer from '../components/Footer';
+import {supabase} from '../supabaseClient';
+
+const validateEmail = (email) => {
+  const cleanEmail = email.trim().toLowerCase();
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(cleanEmail);
+};
+
 
 export default function Recommendations() {
   const [recs, setRecs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitStatus, setSubmitStatus] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     designation: '',
@@ -17,16 +26,27 @@ export default function Recommendations() {
   });
 
   // Target your local Django API port
-  const API_URL = 'https://fkk18mk5-8000.inc1.devtunnels.ms/api/recommendations/';
+  //const API_URL = 'http://localhost:8000/api/recommendations/';
 
   // 1. GET Request: Fetch recommendations from Django
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_URL);
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data = await response.json();
+      const { data, error } = await supabase
+      .from('recommendations')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching recommendations:', error);
+    } else {
       setRecs(data);
+    }
+    setLoading(false);
+      //const response = await fetch(API_URL);
+      //if (!response.ok) throw new Error('Network response was not ok');
+      //const data = await response.json();
+      //setRecs(data);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
     } finally {
@@ -36,7 +56,39 @@ export default function Recommendations() {
 
   useEffect(() => {
     fetchRecommendations();
+    const channel = supabase
+      .channel('recommendations-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'recommendations' },
+        () => fetchRecommendations()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+
+
   }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // live email validation
+    if (name === 'email') {
+      if (value && !validateEmail(value)) {
+        setEmailError('Invalid email format');
+      } else {
+        setEmailError('');
+      }
+    }
+  };
 
   // 2. POST Request: Send new recommendation to Django
   const handleSubmit = async (e) => {
@@ -44,21 +96,59 @@ export default function Recommendations() {
     setSubmitStatus('Submitting...');
 
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      // optimistic UI
+    const optimisticRec = {
+      id: crypto.randomUUID(),
+      ...formData,
+      created_at: new Date().toISOString()
+    };
+
+    setRecs((prev) => [optimisticRec, ...prev]);
+
+    // ✅ format email properly
+    const formattedData = {
+      ...formData,
+      email: formData.email.trim().toLowerCase()
+    };
+
+    // ❌ validate email
+    if (!validateEmail(formattedData.email)) {
+      setSubmitStatus('error');
+      setEmailError('Please enter a valid email address');
+
+      setRecs((prev) =>
+        prev.filter((rec) => rec.id !== optimisticRec.id)
+      );
+
+      return;
+    }
+
+    const { error } = await supabase
+      .from('recommendations')
+      .insert([formattedData]);
+
+    if (error) {
+      console.error('Error inserting:', error);
+      setSubmitStatus('error');
+
+      setRecs((prev) =>
+        prev.filter((rec) => rec.id !== optimisticRec.id)
+      );
+    } else {
+      setSubmitStatus('success');
+
+      setFormData({
+        name: '',
+        designation: '',
+        email: '',
+        company: '',
+        description: ''
       });
 
-      if (response.ok) {
-        setSubmitStatus('Thank you! Your recommendation was added.');
-        setFormData({ name: '', designation: '', company: '', description: '', email: '' }); // Clear form
-        fetchRecommendations(); // Refresh list automatically
-      } else {
-        setSubmitStatus('Failed to submit. Please try again.');
-      }
+      setEmailError('');
+
+      setTimeout(() => setSubmitStatus(''), 3000);
+    }
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitStatus('Server connection error.');
@@ -81,7 +171,7 @@ export default function Recommendations() {
             {loading ? (
               <div className="loading-state">
                 <Loader2 className="spinner" />
-                <p>Fetching data from Django API...</p>
+                <p>Fetching data ...</p>
               </div>
             ) : recs.length === 0 ? (
               <p className="empty-state">No recommendations yet. Be the first to add one below!</p>
@@ -96,7 +186,7 @@ export default function Recommendations() {
                       </div>
                       <div>
                         <h4>{rec.name}</h4>
-                        <p className="author-title">{rec.designation} - {rec.company}</p>
+                        <p className="author-title">{rec.designation} @ {rec.company}</p>
                       </div>
                     </div>
                   </div>

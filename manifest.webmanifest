@@ -2,14 +2,14 @@
   "name": "Muhammad Mughees Ahmed",
   "short_name": "Portfolio",
   "description": "AI Engineer Portfolio",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#10b918",
   "theme_color": "#000000",
   "color": "white",
   "icons": [
     {
-      "src": "/public/assets/favicon.svg",
+      "src": "assets/favicon.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any"

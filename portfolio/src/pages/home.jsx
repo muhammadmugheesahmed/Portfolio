@@ -123,7 +123,7 @@ export default function Home() {
       {/* Right Column: Profile Image Container */}
       <div className="about-image-wrapper">
         <img 
-          src="\images\portfolio_picture.jpeg" // <-- Replace with your actual image path
+          src="\public\images\portfolio_picture.jpeg" // <-- Replace with your actual image path
           alt="M Mughees Ahmed" 
           className="about-profile-img"
         />

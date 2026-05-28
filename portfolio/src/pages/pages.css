@@ -35,7 +35,7 @@ html {
   border: 1px solid var(--glass-border);
   align-items: center;
   /* High-end liquid frosted glass properties */
-  backdrop-filter: blur(14px);
+  
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   box-shadow: var(--card-shadow);

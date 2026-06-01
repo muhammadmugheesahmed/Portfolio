@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MessageSquare, User, Briefcase, Send, Loader2, Mail, Building } from 'lucide-react';
 import './recommendation.css';
 import './Pages.css';
 import Footer from '../components/Footer';
-import {supabase} from '../supabaseClient';
+import { supabase } from '../supabaseClient';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const validateEmail = (email) => {
   const cleanEmail = email.trim().toLowerCase();
@@ -11,42 +12,56 @@ const validateEmail = (email) => {
   return regex.test(cleanEmail);
 };
 
-
 export default function Recommendations() {
+  const recaptchaRef = useRef();
   const [recs, setRecs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitStatus, setSubmitStatus] = useState('');
   const [emailError, setEmailError] = useState('');
+  
+  // NEW: State to track dark mode
+  const [isDark, setIsDark] = useState(false);
+  console.log("Current theme state isDark:", isDark);
   const [formData, setFormData] = useState({
     name: '',
     designation: '',
     description: '',
     email: '',
-    company:'',
+    company: '',
   });
 
-  // Target your local Django API port
-  //const API_URL = 'http://localhost:8000/api/recommendations/';
+  // NEW: Effect to watch for theme changes automatically
+  useEffect(() => {
+    const checkTheme = () => {
+      // If the HTML tag has 'light-theme', it is light mode. Otherwise, it is dark mode.
+      const isLightMode = document.documentElement.classList.contains('light-theme');
+      setIsDark(!isLightMode);
+    };
 
-  // 1. GET Request: Fetch recommendations from Django
+    // Initial check when the component first loads
+    checkTheme();
+
+    // Watch the <html> tag for any changes to its 'class' attribute
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // 1. GET Request: Fetch recommendations from Supabase
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
-      .from('recommendations')
-      .select('*')
-      .order('created_at', { ascending: false });
+        .from('recommendations')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching recommendations:', error);
-    } else {
-      setRecs(data);
-    }
-    setLoading(false);
-      //const response = await fetch(API_URL);
-      //if (!response.ok) throw new Error('Network response was not ok');
-      //const data = await response.json();
-      //setRecs(data);
+      if (error) {
+        console.error('Error fetching recommendations:', error);
+      } else {
+        setRecs(data);
+      }
     } catch (error) {
       console.error('Error fetching recommendations:', error);
     } finally {
@@ -68,8 +83,6 @@ export default function Recommendations() {
     return () => {
       supabase.removeChannel(channel);
     };
-
-
   }, []);
 
   const handleChange = (e) => {
@@ -90,13 +103,34 @@ export default function Recommendations() {
     }
   };
 
-  // 2. POST Request: Send new recommendation to Django
+  // 2. POST Request: Send new recommendation to Supabase
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitStatus('Submitting...');
+    setEmailError('');
 
-    try {
-      // optimistic UI
+    // 🛑 1. Verify reCAPTCHA on the frontend first
+    const recaptchaToken = recaptchaRef.current.getValue();
+    
+    if (!recaptchaToken) {
+      setSubmitStatus('');
+      setEmailError('Please check the reCAPTCHA box to prove you are human.');
+      return;
+    }
+
+    // 🛑 2. Validate email before optimistic UI
+    const formattedData = {
+      ...formData,
+      email: formData.email.trim().toLowerCase()
+    };
+
+    if (!validateEmail(formattedData.email)) {
+      setSubmitStatus('');
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    // 3. Optimistic UI update
     const optimisticRec = {
       id: crypto.randomUUID(),
       ...formData,
@@ -105,24 +139,7 @@ export default function Recommendations() {
 
     setRecs((prev) => [optimisticRec, ...prev]);
 
-    // ✅ format email properly
-    const formattedData = {
-      ...formData,
-      email: formData.email.trim().toLowerCase()
-    };
-
-    // ❌ validate email
-    if (!validateEmail(formattedData.email)) {
-      setSubmitStatus('error');
-      setEmailError('Please enter a valid email address');
-
-      setRecs((prev) =>
-        prev.filter((rec) => rec.id !== optimisticRec.id)
-      );
-
-      return;
-    }
-
+    // 4. Insert into Supabase
     const { error } = await supabase
       .from('recommendations')
       .insert([formattedData]);
@@ -130,13 +147,14 @@ export default function Recommendations() {
     if (error) {
       console.error('Error inserting:', error);
       setSubmitStatus('error');
-
-      setRecs((prev) =>
-        prev.filter((rec) => rec.id !== optimisticRec.id)
-      );
+      
+      // Rollback optimistic UI on error
+      setRecs((prev) => prev.filter((rec) => rec.id !== optimisticRec.id));
+      recaptchaRef.current.reset(); // Reset recaptcha so they can try again
     } else {
       setSubmitStatus('success');
-
+      
+      // Clear form
       setFormData({
         name: '',
         designation: '',
@@ -144,14 +162,10 @@ export default function Recommendations() {
         company: '',
         description: ''
       });
-
-      setEmailError('');
+      
+      recaptchaRef.current.reset(); // Reset recaptcha after success
 
       setTimeout(() => setSubmitStatus(''), 3000);
-    }
-    } catch (error) {
-      console.error('Submission error:', error);
-      setSubmitStatus('Server connection error.');
     }
   };
 
@@ -204,9 +218,10 @@ export default function Recommendations() {
                   <User className="input-icon" />
                   <input
                     type="text"
+                    name="name"
                     placeholder="Your Full Name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -215,9 +230,10 @@ export default function Recommendations() {
                   <Mail className="input-icon" />
                   <input
                     type="email"
+                    name="email"
                     placeholder="Your Email Address"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -226,9 +242,10 @@ export default function Recommendations() {
                   <Building className="input-icon" />
                   <input
                     type="text"
+                    name="company"
                     placeholder="Your Company Name"
                     value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    onChange={handleChange}
                     required
                   />
                 </div>
@@ -237,28 +254,44 @@ export default function Recommendations() {
                   <Briefcase className="input-icon" />
                   <input
                     type="text"
-                    placeholder="Designation (e.g., Senior Dev at Company)"
+                    name="designation"
+                    placeholder="Designation (e.g., Senior Dev)"
                     value={formData.designation}
-                    onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                    onChange={handleChange}
                     required
                   />
                 </div>
 
                 <div className="input-group textarea-group">
                   <textarea
+                    name="description"
                     placeholder="Your recommendation text..."
                     rows="6"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={handleChange}
                     required
                   />
                 </div>
 
-                <button type="submit" className="submit-btn">
-                  <Send size={16} /> Submit
+                {emailError && <p className="error-text" style={{color: '#ef4444', marginBottom: '10px'}}>{emailError}</p>}
+
+                {/* UPDATED RECAPTCHA HERE */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <ReCAPTCHA
+                    key={isDark ? 'dark-mode' : 'light-mode'} /* Forces reload on theme change */
+                    theme={isDark ? 'dark' : 'light'}         /* Sets the visual theme */
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    ref={recaptchaRef}
+                  />
+                </div>
+
+                <button type="submit" className="submit-btn" disabled={submitStatus === 'Submitting...'}>
+                  {submitStatus === 'Submitting...' ? <Loader2 className="spinner" size={16} /> : <Send size={16} />} 
+                  {submitStatus === 'Submitting...' ? ' Submitting...' : ' Submit'}
                 </button>
 
-                {submitStatus && <p className="form-status">{submitStatus}</p>}
+                {submitStatus === 'success' && <p className="form-status" style={{color: '#10b981', marginTop: '10px'}}>Recommendation submitted successfully!</p>}
+                {submitStatus === 'error' && <p className="form-status" style={{color: '#ef4444', marginTop: '10px'}}>Failed to submit. Please try again.</p>}
               </form>
             </div>
           </div>

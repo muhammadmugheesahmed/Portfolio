@@ -3,28 +3,28 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2.5rem;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
   min-height: calc(100vh - 80px);
   background-color: var(--bg-main);
-  padding: 2rem 1.2rem 4rem;
+  padding: clamp(1rem, 5vw, 2rem) 1.2rem clamp(2rem, 8vw, 4rem);
   box-sizing: border-box;
 }
 
 .contact-card {
   width: 100%;
   max-width: 600px;
-  padding: 3rem;
-  margin-top:75px;
-  box-sizing:border-box;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  margin-top: clamp(60px, 10vw, 75px);
+  box-sizing: border-box;
 }
 
 .contact-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .contact-header h2 {
-  font-size: 2.2rem;
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
   margin-bottom: 0.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -32,7 +32,7 @@
 
 .contact-header p {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
   line-height: 1.5;
 }
 
@@ -48,13 +48,8 @@
   color: var(--text-muted);
 }
 
-.input-wrapper input {
-  padding-left: 3rem;
-}
-
-.input-wrapper textarea {
-  padding-left: 1.2rem;
-}
+.input-wrapper input { padding-left: 3rem; }
+.input-wrapper textarea { padding-left: 1.2rem; }
 
 .submit-button {
   width: 100%;
@@ -72,7 +67,6 @@
   cursor: not-allowed;
 }
 
-/* Response Alert Boxes */
 .alert-box {
   display: flex;
   align-items: center;
@@ -96,19 +90,25 @@
   color: #f87171;
 }
 
-/* ==================== MEDIA QUERIES ==================== */
-@media (max-width: 768px) {
-  .contact-page {
-    /* Slightly more vertical breathing room on top for the mobile navbar */
-    padding: 1rem 3rem 3rem; 
-  }
+.turnstile-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  overflow: hidden;
+}
 
-  .contact-card {
-    margin-top: 100px;
-    padding: 2rem 1.5rem; /* Reduces large desktop inner card padding so form inputs look cleaner on mobile */
+/* Very Small Screens (Turnstile Recaptcha Scaling) */
+@media (max-width: 360px) {
+  .turnstile-container > div {
+    transform: scale(0.85);
+    transform-origin: center;
   }
+}
 
-  .contact-header h2 {
-    font-size: 1.8rem; /* Scales down heading slightly on phones */
+@media (max-width: 310px) {
+  .turnstile-container > div {
+    transform: scale(0.75);
+    transform-origin: center;
   }
 }

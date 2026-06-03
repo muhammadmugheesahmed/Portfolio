@@ -4,6 +4,7 @@
   width: 100%;
   background: var(--navbar-bg);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-glass);
   z-index: 1000;
 }
@@ -11,7 +12,7 @@
 .nav-container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.2rem 2rem;
+  padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1rem, 4vw, 2rem);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,10 +20,11 @@
 }
 
 .nav-logo {
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
   font-weight: 700;
   text-decoration: none;
   color: var(--text-main);
+  white-space: nowrap;
 }
 
 .nav-logo span { color: var(--accent); }
@@ -30,13 +32,19 @@
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  justify-content: flex-end;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .nav-links a {
   text-decoration: none;
   color: var(--navbar-link);
-  margin-left: 2rem;
   font-weight: 500;
   transition: color 0.2s, transform 0.2s;
 }
@@ -57,11 +65,10 @@
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  /* Deep inset shadows for dark mode track */
   box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.6), inset -3px -3px 6px rgba(255, 255, 255, 0.04);
   transition: all 0.3s ease;
   outline: none;
-  flex-shrink: 0; /* Prevents the switch from shrinking on very small screens */
+  flex-shrink: 0;
 }
 
 .light-theme .theme-toggle {
@@ -92,7 +99,6 @@
   justify-content: center;
   color: var(--accent);
   z-index: 2;
-  /* Raised drop shadow for dark mode thumb */
   box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6), -3px -3px 6px rgba(255, 255, 255, 0.04);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background 0.3s ease;
 }
@@ -101,14 +107,8 @@
   box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #ffffff;
 }
 
-/* Thumb positioning mechanics */
-.neumorphic-thumb.dark {
-  transform: translateX(0);
-}
-
-.neumorphic-thumb.light {
-  transform: translateX(38px);
-}
+.neumorphic-thumb.dark { transform: translateX(0); }
+.neumorphic-thumb.light { transform: translateX(38px); }
 
 .theme-toggle svg {
   stroke: currentColor;
@@ -116,7 +116,6 @@
   stroke-width: 2;
 }
 
-/* Hide the hamburger icon on desktop screens */
 .menu-icon {
   display: none;
   background: none;
@@ -125,91 +124,31 @@
   cursor: pointer;
 }
 
-/* ==================== RESPONSIVE MEDIA QUERY ==================== */
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE: TABLETS & MOBILE ==================== */
+@media (max-width: 850px) {
   .menu-icon {
-    display: block; /* Show hamburger button on mobile screens */
-    z-index:1001; /* Ensure it sits above the nav-links */
-    margin-left: 0;
+    display: block;
+    z-index: 1001;
   }
   
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
   .nav-links {
     position: absolute;
-    top: 100%; /* Sits exactly below the navbar header */
+    top: 100%;
     left: 0;
     width: 100%;
-    background: var(--navbar-bg); /* Slightly less transparent for legibility */
+    background: var(--navbar-bg);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-glass);
-    display: flex;
     flex-direction: column;
     padding: 1.5rem 0;
     gap: 1.5rem;
-    
-    /* Hidden by default with transitions */
     opacity: 0;
     transform: translateY(-10px);
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
-  /* When the user clicks the hamburger menu, this class activates */
-  .nav-links.active {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  .nav-links a {
-    margin-left: 0;
-    text-align: center;
-    width: 100%;
-    font-size: 1.1rem;
-    padding: 0.5rem 0;
-  }
-}
-
-/* ==================== RESPONSIVE MEDIA QUERY ==================== */
-@media (max-width: 900px) {
-  .menu-icon {
-    display: block; /* Show hamburger button on mobile screens */
-    z-index:1001; /* Ensure it sits above the nav-links */
-    margin-left: 0;
-  }
-  
-.navbar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-}
-
-  .nav-links {
-    position: absolute;
-    top: 100%; /* Sits exactly below the navbar header */
-    left: 0;
-    width: 100%;
-    background: var(--navbar-bg); /* Slightly less transparent for legibility */
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-glass);
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem 0;
-    gap: 1.5rem;
-    
-    /* Hidden by default with transitions */
-    opacity: 0;
-    transform: translateY(-10px);
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  /* When the user clicks the hamburger menu, this class activates */
   .nav-links.active {
     opacity: 1;
     transform: translateY(0);

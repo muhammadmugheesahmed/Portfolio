@@ -1,4 +1,5 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Pages.css';
 import { FaCheck,FaCode,FaGlobe,FaDatabase,FaTools,FaDownload,FaPhone} from 'react-icons/fa';
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope,FaChartBar,FaFilePdf} from 'react-icons/fa';
@@ -94,7 +95,7 @@ export default function Home() {
               <a href={import.meta.env.BASE_URL + 'Mughees_resume.pdf'} download="Mughees_resume.pdf" className="btn" target="_blank" rel="noopener noreferrer">
                 <FaDownload /><span style={{marginLeft:'15px'}}> Download Resume</span>
               </a>
-              <a href="#contact" className="btn btn-outline"><FaPhone /><span style={{marginLeft:'15px'}}> Contact Me</span></a>
+              <Link to="/contact" className="btn btn-outline"><FaPhone /><span style={{marginLeft:'15px'}}> Contact Me</span></Link>
         </div>
       </section>
 

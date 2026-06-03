@@ -201,26 +201,26 @@ export default function Recommendations() {
               <form onSubmit={handleSubmit}>
                 <div className="input-group">
                   <User className="input-icon" />
-                  <input type="text" name="name" placeholder="Your Full Name" value={formData.name} onChange={handleChange} required />
+                  <input type="text" name="name" placeholder="Your Full Name" value={formData.name} autoComplete="name" onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Mail className="input-icon" />
-                  <input type="email" name="email" placeholder="Your Email Address" value={formData.email} onChange={handleChange} required />
+                  <input type="email" name="email" placeholder="Your Email Address" value={formData.email} autoComplete="email" onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Building className="input-icon" />
-                  <input type="text" name="company" placeholder="Your Company Name" value={formData.company} onChange={handleChange} required />
+                  <input type="text" name="company" placeholder="Your Company Name" value={formData.company} autoComplete="organization" onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Briefcase className="input-icon" />
-                  <input type="text" name="designation" placeholder="Designation (e.g., Senior Dev)" value={formData.designation} onChange={handleChange} required />
+                  <input type="text" name="designation" placeholder="Designation (e.g., Senior Dev)" value={formData.designation} autoComplete="organization-title" onChange={handleChange} required />
                 </div>
 
                 <div className="input-group textarea-group">
-                  <textarea name="description" placeholder="Your recommendation text..." rows="6" value={formData.description} onChange={handleChange} required />
+                  <textarea name="description" placeholder="Your recommendation text..." rows="6" value={formData.description} autoComplete="off" onChange={handleChange} required />
                 </div>
 
                 {emailError && <p className="error-text" style={{color: '#ef4444', marginBottom: '10px'}}>{emailError}</p>}

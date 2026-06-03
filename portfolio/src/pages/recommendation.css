@@ -6,11 +6,12 @@
 }
 
 .page-header h2 {
-  font-size: 2.2rem;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: clamp(8px, 2vw, 0.75rem);
   margin-bottom: 0.5rem;
+  flex-wrap: wrap; /* Allows wrap on very tiny screens */
 }
 
 .title-icon {
@@ -20,17 +21,18 @@
 
 .page-header p {
   color: var(--text-muted);
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
 .recommendations-layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr; /* Two columns: wide for list, narrow for form */
-  gap: 3rem;
+  grid-template-columns: 1.5fr 1fr; 
+  gap: clamp(2rem, 5vw, 3rem);
   align-items: start;
 }
 
 .recs-display-section h3, .recs-form-section h3 {
-  font-size: 1.3rem;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
   margin-bottom: 1.5rem;
   font-weight: 600;
 }
@@ -74,6 +76,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .author-title {
@@ -83,9 +86,7 @@
 }
 
 /* Form Styles */
-.input-group {
-  position: relative;
-}
+.input-group { position: relative; }
 
 .input-icon {
   position: absolute;
@@ -96,9 +97,7 @@
   color: var(--text-muted);
 }
 
-.input-group input {
-  padding-left: 2.8rem; /* Keeps text clear of icons */
-}
+.input-group input { padding-left: 2.8rem; }
 
 .submit-btn {
   display: inline-flex;
@@ -144,23 +143,14 @@
 /* Responsive adjustment */
 @media (max-width: 900px) {
   .recommendations-layout {
-    grid-template-columns: 1fr; /* Fold down to 1 column on tablets/phones */
-    gap: 4rem;
+    grid-template-columns: 1fr; 
+    gap: 3rem;
   }
   .recs-form-section {
-    order: -1; /* Place input form on top when on mobile devices */
+    order: -1; 
   }
 }
 
-@media (max-width: 768px) {
-  /* CHANGED: Swapped .section-title to .page-header h2 to match your JSX structure */
-  .page-header h2 {
-    font-size: 1.6rem;      /* Shrinks the font size dynamically so 'Recommendations' stays on line 1 */
-    gap: 8px;               /* Slightly tighter spacing on phones */
-    flex-wrap: nowrap;      /* ABSOLUTE FIX: Locks the MessageSquare icon on the exact same line as text */
-  }
-  
-  .page-header p {
-    font-size: 0.95rem;     /* Slightly crisper paragraph text for mobile viewports */
-  }
+@media (max-width: 480px) {
+  .page-header h2 { flex-wrap: nowrap; }
 }

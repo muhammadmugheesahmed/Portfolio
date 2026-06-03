@@ -1,14 +1,10 @@
-/* --- MECHANICS & SMOOTH SCROLL --- */
 html {
   scroll-behavior: smooth;
-  /* Gives section targets anchor padding so the titles don't get hidden behind your navbars */
   scroll-padding-top: 140px; 
 }
-.form-icon {
-  color: var(--text-muted);
-}
+.form-icon { color: var(--text-muted); }
 .home-root-container {
-  background-color: var(--bg-main); /* Theme-aware canvas alignment */
+  background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
 }
@@ -16,26 +12,24 @@ html {
 /* --- DETACHED FROSTED CAPSULE SUB-NAVBAR --- */
 .sub-nav-wrapper {
   position: sticky;
-  top: 4.5rem; /* Sits perfectly right underneath your primary 4rem (h-16) global App navbar */
+  top: 4.5rem; 
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 1rem 0;
-  z-index: 900; /* Layer stays safely behind primary application nav menu layer */
-  pointer-events: none; /* Allows user clicks to pass through empty margins */
+  z-index: 900; 
+  pointer-events: none; 
 }
 
 .glass-capsule-nav {
-  pointer-events: auto; /* Re-enables input events inside the capsule container */
+  pointer-events: auto; 
   display: inline-flex;
   gap: 1.5rem;
   padding: 0.6rem 2rem;
-  border-radius: 9999px; /* Absolute capsule rounded pill execution */
+  border-radius: 9999px;
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
   align-items: center;
-  /* High-end liquid frosted glass properties */
-  
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   box-shadow: var(--card-shadow);
@@ -49,220 +43,127 @@ html {
   transition: var(--transition);
   white-space: nowrap;
   cursor: pointer;
-  white-space: normal;
   text-align: center;
   padding: 0.3rem 0.6rem;
 }
 
 .sub-nav-link:hover {
-  color: var(--accent); /* Matches your emerald design accents */
+  color: var(--accent); 
   transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
   .sub-nav-wrapper {
     top: 5.5rem;
-    padding: 0.8rem 10px; /* Adds defensive margins on tiny screens so capsule doesn't touch the screen edge */
-    
+    padding: 0.8rem 10px;
   }
-
   .glass-capsule-nav {
-/* Switch from inline-flex to normal flex and allow wrapping */
     display: flex;
     flex-wrap: wrap; 
     justify-content: center;
-    margin-top:15px;
-    /* Changes capsule border radius to match a multi-line box shape nicely */
-    border-radius: 50px; 
-    
-    /* Tighter spacing so it packs tightly into two lines */
-    gap: 0.8rem 1.2rem; /* row-gap: 0.8rem, column-gap: 1.2rem */
-    padding: 0.8rem 1.5rem;
-    max-width: 90%; /* Keeps it from touching the absolute screen edges */
-    
-    /* Turn off the scroll features completely */
+    margin-top: 15px;
+    border-radius: 20px; 
+    gap: 0.8rem 1rem;
+    padding: 0.8rem 1.2rem;
+    max-width: 95%; 
     overflow-x: visible; 
-}
-
-  /* Hide nasty default desktop scrollbars on mobile to keep the premium clean UI look */
-  .glass-capsule-nav::-webkit-scrollbar {
-    display: none;
   }
-  .glass-capsule-nav {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-
-.sub-nav-link {
-    /* Allow words to split into a second line if necessary, but keep layout centered */
+  .sub-nav-link {
     white-space: normal; 
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 0.3rem 0.6rem;
   }
 }
 
-/*about section */
-/* Container Card Layout */
+/* --- ABOUT SECTION --- */
 .about-card {
-  background: var(--glass-bg); /* Matches your glass/card theme */
-  padding: 40px;
+  background: var(--glass-bg);
+  padding: clamp(20px, 5vw, 40px);
   border-radius: 12px;
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(12px);
-  
-  /* Creates the 2-column layout split 50/50 */
+  -webkit-backdrop-filter: blur(12px);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center; /* Vertically centers text and image relative to each other */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(20px, 5vw, 40px);
+  align-items: center;
 }
 
-/* Left Column Styling */
 .about-text-content p {
   color: var(--text-secondary-color);
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
   line-height: 1.7;
   margin: 0;
 }
 
-/* Right Column Styling */
 .about-image-wrapper {
   display: flex;
-  justify-content: center; /* Centers the image inside its 50% boundary */
+  justify-content: center;
   align-items: center;
 }
 
 .about-profile-img {
-  width: 240px;           /* Control the size of your picture here */
-  height: 240px;
-  border-radius: 50%;     /* Makes the image a perfect circle */
-  object-fit: cover;      /* Prevents stretching/distortion */
-  border: 3px solid var(--accent); /* Optional: Adds an emerald accent ring around your photo */
+  width: clamp(150px, 30vw, 240px); 
+  height: clamp(150px, 30vw, 240px);
+  border-radius: 50%; 
+  object-fit: cover; 
+  border: 3px solid var(--accent);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* ==================== RESPONSIVE BREAKPOINT ==================== */
 @media (max-width: 768px) {
-  .about-card {
-    /* Stacks them into 1 column on mobile so it doesn't compress horizontally */
-    grid-template-columns: 1fr; 
-    gap: 30px;
-    padding: 30px 20px;
-    text-align: center;
-  }
-  
-  .about-image-wrapper {
-    /* Puts the image on top or bottom smoothly on mobile mobile */
-    order: -1; /* Optional: forces image to show ABOVE the text on phone viewports */
-  }
-
-  .about-profile-img {
-    width: 180px; /* Marginally smaller dimensions for mobile display optimization */
-    height: 180px;
-  }
+  .about-card { text-align: center; }
+  .about-image-wrapper { order: -1; }
 }
 
-@media (max-width: 640px) {
-  .about-card {
-    padding: 20px 15px;
-  }
-  .about-profile-img {
-    width: 150px;
-    height: 150px;
-  }
-  .about-text-content p {
-    font-size: 1rem;
-  }
-}
-
-/* --- HERO ADJUSTMENTS FOR CAPSULE COMPATIBILITY --- */
+/* --- HERO SECTION --- */
 .hero-section {
-  min-height: 85vh; /* Shortened slightly so sub-nav sits nicely into layout view */
+  min-height: 85vh; 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0rem 1.5rem;
+  padding: 0 clamp(1rem, 5vw, 2rem);
   max-width: 1024px;
-  margin:0 auto;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
+.hero-inner-content { width: 100%; }
+
 .hero-inner-content h1 {
-  /* MOBILE STANDARD: A cleaner size for narrow viewports */
-  font-size: 2.5rem; 
+  /* FLUID TYPOGRAPHY: Replaces all 4 media queries perfectly */
+  font-size: clamp(2.5rem, 6vw + 1rem, 5.5rem); 
   font-weight: 800;
   letter-spacing: -0.025em;
-  line-height: 1.2; /* Prevents overlapping lines on mobile */
+  line-height: 1.1; 
   margin-bottom: 1.2rem;
   margin-top: 1rem;
-  word-wrap: break-word; /* Safety net: breaks long words gracefully */
-}
-
-.hero-inner-content{
-  width:100%;
-}
-
-/* TABLET AND DESKTOP OVERRIDES */
-@media (min-width: 640px) {
-  .hero-section {
-    padding: 0 2rem; /* More breathing room on bigger screens */
-  }
+  word-wrap: break-word; 
 }
 
 @media (min-width: 768px) {
-  .hero-inner-content h1 { 
-    font-size: 4.5rem;
-    margin-top: -2rem;
-  }
+  .hero-inner-content h1 { margin-top: -2rem; }
 }
 
-@media (min-width: 900px) {
-  .hero-inner-content h1 { 
-    font-size: 5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero-inner-content h1 { 
-    font-size: 5.5rem;
-  }
-}
-
-.text-accent {
-  color: var(--accent); /* Synchronizing theme colors with your crisp header logo emerald */
-}
+.text-accent { color: var(--accent); }
 
 /* --- RE-STYLING SECTIONS & CARDS --- */
 .content-section {
-  padding: 6rem 2rem;
+  padding: clamp(4rem, 10vw, 6rem) clamp(1.5rem, 5vw, 2rem);
   max-width: 1024px;
   margin: 0 auto;
   border-top: 1px solid var(--section-border);
 }
 
-@media (max-width: 640px) {
-  .content-section {
-    padding: 4rem 1.5rem;
-  }
-}
-
 .section-title {
-  font-size: 1.875rem;
+  font-size: clamp(1.5rem, 4vw, 1.875rem);
   font-weight: 700;
   margin-bottom: 1.5rem;
   color: var(--accent);
 }
 
-@media (max-width: 640px) {
-  .section-title {
-    font-size: 1.5rem;
-    text-align: center;
-  }
-}
+@media (max-width: 640px) { .section-title { text-align: center; } }
 
 .glass-card {
-  padding: 2rem;
+  padding: clamp(1.5rem, 4vw, 2rem);
   border-radius: 1rem;
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -283,90 +184,61 @@ html {
   margin-bottom: 10px;
 }
 
-.skills-badge-flex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-self: left;
-}
-
-.skill-badge {
-  padding: 0.5rem 1.2rem;
-  font-size: 0.70rem;
-  font-weight: 500;
-  border-radius: 9999px;
-  background-color: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: var(--text-main);
-  justify-self: left;
-}
-
 .projects-grid-layout {
   display: grid;
   gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .projects-grid-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (min-width: 900px) {
-  .projects-grid-layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .interactive-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
 }
 
 .interactive-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-  border-color: #10b981; /* Accent hover border color */
+  border-color: #10b981; 
 }
-/* Tag Layout Fixes */
+
 .project-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: auto; /* Pushes tags cleanly to the absolute bottom of the card */
+  margin-top: auto; 
 }
 
 .project-tags span {
-  font-weight:500;
+  font-weight: 500;
   font-size: 0.8rem;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
   background-color: rgba(16, 185, 129, 0.08);
   border: 1px solid var(--accent);
   color: var(--text-main);
-  margin-right: 0.5rem;
 }
 
-.project-bottom-padding {
-  padding-bottom: 8rem;
-}
+.project-bottom-padding { padding-bottom: 8rem; }
 
 .project-title {
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-color);
-  margin: 0 0 1rem 0; /* Clean bottom margin instead of <br/> */
+  margin: 0 0 1rem 0; 
 }
 
 .project-description {
   color: #94a3b8;
   font-size: 0.95rem;
   line-height: 1.6;
-  margin: 0 0 1.5rem 0; /* Consistent separation space before tags */
+  margin: 0 0 1.5rem 0; 
 }
 
 /* ===== FOOTER SECTION ===== */
 .main-footer {
-  background-color: var(--footer-bg); /* Matches your skill cards background */
+  background-color: var(--footer-bg); 
   padding: 30px 0;
-  border-top: 1px solid var(--footer-border); /* Matches your card borders */
-  margin-top: 60px; /* Separates the footer cleanly from the contact section */
+  border-top: 1px solid var(--footer-border); 
+  margin-top: 60px; 
   width: 100%;
   box-sizing: border-box;
 }
@@ -378,7 +250,7 @@ html {
   flex-wrap: wrap;
   gap: 20px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 clamp(1rem, 5vw, 24px);
 }
 
 .footer-info p {
@@ -393,6 +265,7 @@ html {
   gap: 20px;
   padding: 0;
   margin: 0;
+  flex-wrap: wrap;
 }
 
 .footer-links a {
@@ -403,48 +276,26 @@ html {
   transition: var(--transition);
 }
 
-.footer-links a:hover {
-  color: var(--accent); /* Accent color change on hover */
-}
+.footer-links a:hover { color: var(--accent); }
 
-.footer-socials {
-  display: flex;
-  gap: 15px;
-}
-
+.footer-socials { display: flex; gap: 15px; }
 .footer-socials a {
   color: var(--text-secondary-color);
   font-size: 1.2rem;
   transition: var(--transition);
 }
-
 .footer-socials a:hover {
   color: var(--accent);
   transform: translateY(-2px);
 }
 
-/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;
     text-align: center;
     justify-content: center;
   }
-
-  .footer-links {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 640px) {
-  .footer-links {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .footer-socials {
-    margin-top: 10px;
-  }
+  .footer-links { justify-content: center; }
 }
 
 /* ===== EXPERIENCE SECTION (TIMELINE) ===== */
@@ -461,37 +312,37 @@ html {
   background-color: var(--accent);
   top: 0;
   bottom: 0;
-  left: 15px;
+  left: clamp(10px, 3vw, 15px);
 }
 
 .timeline-item {
-  padding: 10px 0 30px 50px;
+  padding: 10px 0 30px clamp(35px, 8vw, 50px);
   position: relative;
 }
 
 .timeline-dot {
   position: absolute;
   top: 10px;
-  width: 25px;
-  height: 25px;
+  width: clamp(20px, 4vw, 25px);
+  height: clamp(20px, 4vw, 25px);
   border-radius: 50%;
   background: var(--accent);
   border: 3px solid var(--text-secondary-color);
   z-index: 1;
   transform: translateX(-50%);
-  left: 16.5px;
+  left: clamp(12px, 3vw, 17px);
 }
 
 .timeline-content {
   background: var(--bg-color);
-  padding: 25px;
+  padding: clamp(15px, 4vw, 25px);
   border-radius: 10px;
   border: 1px solid var(--border-color);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .timeline-content h3 {
-  font-size: 1.4rem;
+  font-size: clamp(1.2rem, 3.5vw, 1.4rem);
   margin-bottom: 5px;
 }
 
@@ -502,46 +353,23 @@ html {
   margin-bottom: 15px;
 }
 
-.timeline-content ul {
-  padding-left: 20px;
-}
-
+.timeline-content ul { padding-left: 20px; }
 .timeline-content ul li {
   margin-bottom: 8px;
   color: var(--text-muted);
   list-style-type: disc;
 }
 
-@media (max-width: 640px) {
-  .timeline::after {
-    left: 10px;
-  }
-  .timeline-item {
-    padding: 10px 0 30px 35px;
-  }
-  .timeline-dot {
-    left: 11.5px;
-    width: 20px;
-    height: 20px;
-  }
-  .timeline-content {
-    padding: 15px;
-  }
-  .timeline-content h3 {
-    font-size: 1.25rem;
-  }
-}
-
 /* ===== SKILLS SECTION ===== */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: clamp(20px, 4vw, 30px);
 }
 
 .skill-category {
   background: var(--bg-color);
-  padding: 35px 30px;
+  padding: clamp(20px, 5vw, 35px) clamp(20px, 5vw, 30px);
   border-radius: 10px;
   border: 1px solid #94a3b8;
   transition: var(--transition);
@@ -555,7 +383,7 @@ html {
 }
 
 .skill-category h3 {
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 4vw, 1.5rem);
   margin-bottom: 25px;
   color: var(--text-color);
   display: flex;
@@ -563,7 +391,6 @@ html {
   gap: 10px;
 }
 
-/* Remove default list styling (dots and extra padding) */
 .skill-category ul {
   list-style: none;
   padding: 0;
@@ -572,26 +399,22 @@ html {
 .skill-category ul li {
   display: flex;
   align-items: center;
-  margin-bottom: 12px; /* This controls the space between rows */
+  margin-bottom: 12px; 
   color: var(--text-secondary-color);
   font-size: 1rem;
+  position: relative;
 }
 
-/* Remove the last row's bottom margin so spacing stays clean */
-.skill-category ul li:last-child {
-  margin-bottom: 0;
-}
+.skill-category ul li:last-child { margin-bottom: 0; }
 
-/* Icon Spacing (Controls space between Check icon and Text) */
-.skill-icon{
-  margin-right: 10px; /* Adjust this value to add more or less space */
+.skill-icon {
+  margin-right: 10px; 
   font-size: 0.9rem;
-  flex-shrink: 0; /* Prevents the icon from squishing on small screens */
-  color : var(--text-muted);
+  flex-shrink: 0; 
+  color: var(--text-muted);
 }
 
 .skill-category ul li::before {
-
   font-family: "Font Awesome 6 Free";
   font-weight: 900;
   position: absolute;
@@ -601,16 +424,14 @@ html {
   font-size: 0.9rem;
 }
 
-/*resume button*/
-
+/* BUTTONS */
 .btn {
-display: inline-flex; /* Changed to inline-flex for perfect alignment with icons */
+  display: inline-flex; 
   align-items: center;
   justify-content: center;
   padding: 12px 28px;
   background: var(--primary-color);
   color: var(--white-color);
-  /* Fix layout shift: set a transparent border here so the size doesn't change on hover */
   border: 2px solid transparent; 
   border-radius: 8px;
   font-weight: 600;
@@ -619,14 +440,14 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   cursor: pointer;
   font-size: 1rem;
   box-shadow: 0 2px 6px #10b981;
-  text-decoration: none; /* Keeps links from having default underlines */
+  text-decoration: none; 
 }
 
 .btn:hover {
   background-color: var(--bg-color);
   transform: translateY(-2px);
   color: #10b981;
-  border-color: #10b981; /* Only change the color, the 2px thickness is already there */
+  border-color: #10b981; 
 }
 
 .btn-outline {
@@ -640,21 +461,26 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   color: var(--text-main);
   border: 2px solid #10b981;
 }
+
 .hero-buttons {
   display: flex;
   justify-content: center;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
-.hero-buttons .btn i {
-  margin-left: 8px;
-}
+.hero-buttons .btn { min-width: 180px; }
+.hero-buttons .btn i { margin-left: 8px; }
 
+@media (max-width: 640px) {
+  .hero-buttons { gap: 12px; flex-direction: column; }
+  .hero-buttons .btn { width: 100%; min-width: auto; }
+}
 
 /* ===== CERTIFICATIONS SECTION ===== */
 .certifications {
   background: var(--primary-color);
-  padding: 100px 20px;
+  padding: clamp(60px, 10vw, 100px) clamp(15px, 5vw, 20px);
 }
 
 .certifications .cert-container {
@@ -664,9 +490,9 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
 
 .certifications .section-title {
   text-align: center;
-  font-size: 2.2rem;
+  font-size: clamp(1.8rem, 5vw, 2.2rem);
   font-weight: 700;
-  margin-bottom: 50px;
+  margin-bottom: clamp(30px, 6vw, 50px);
   color: var(--primary-color);
 }
 
@@ -674,8 +500,8 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-bottom:12px;
-  justify-content: flex-start; /* Forces the badge container to align left */
+  margin-bottom: 12px;
+  justify-content: flex-start; 
 }
 
 .skill-badge {
@@ -686,23 +512,20 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   background-color: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.25);
   color: var(--text-main);
-  justify-self: inline-block;
 }
 
-
-/* Certification Grid */
 /* Certification Grid */
 .cert-list {
   display: grid;
-  grid-template-columns: 1fr; /* Default = 1 per row */
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(15px, 4vw, 25px);
 }
 
 .cert-links-row {
   display: flex;
-  gap: 20px; /* Space between the two links */
+  gap: 20px; 
   flex-wrap: wrap;
-  justify-content: center; /* Forces links to stay left */
+  justify-content: center; 
   margin-top: 15px;
 }
 
@@ -710,37 +533,13 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   color: var(--accent);
   cursor: pointer;
   text-decoration: underline;
-  display: inline-flex; /* Aligns the PDF icon perfectly horizontal with text */
+  display: inline-flex; 
   align-items: center;
 }
-/* Force 2 per row on laptops & desktops */
-@media (min-width: 768px) {
-  .cert-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  /* Center the last item if odd */
-  .cert-list .cert-card:last-child:nth-child(odd) {
-    grid-column: 1 / -1; /* span across both columns */
-    justify-self: center;
-  }
 
-}
-
-@media (min-width: 900px) {
-  .cert-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  /* Reset the odd centering rule since we are now in 3 columns */
-  .cert-list .cert-card:last-child:nth-child(odd) {
-    grid-column: auto;
-    justify-self: stretch;
-  }
-}
-
-/* Certification Cards */
 .cert-card {
   background: var(--bg-color);
-  padding: 25px;
+  padding: clamp(20px, 5vw, 25px);
   border-radius: 12px;
   border: 1px solid var(--text-muted);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
@@ -754,7 +553,6 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   border-color: #10b981;
 }
 
-/* Certification Text */
 .cert-title {
   font-size: 1.2rem;
   font-weight: 600;
@@ -767,6 +565,7 @@ display: inline-flex; /* Changed to inline-flex for perfect alignment with icons
   color: var(--text-muted);
   font-style: italic;
 }
+
 .cert-desc {
   font-size: 0.95rem;
   color: var(--text-muted);

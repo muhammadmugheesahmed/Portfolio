@@ -110,6 +110,7 @@
   display: flex;
   gap: 8px;
   margin: 32px 0 0;
+  flex-wrap: wrap; /* Added logic for small phones */
 
   .logo {
     height: 18px;
@@ -138,11 +139,11 @@
 
   @media (max-width: 1024px) {
     margin-top: 20px;
-    flex-wrap: wrap;
     justify-content: center;
 
     li {
-      flex: 1 1 calc(50% - 8px);
+      /* Scales down to 100% width on very small phones instead of 50% */
+      flex: 1 1 min(calc(50% - 8px), 100%); 
     }
 
     a {

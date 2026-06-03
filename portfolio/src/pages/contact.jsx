@@ -98,23 +98,24 @@ export default function Contact() {
           <form ref={formRef} onSubmit={sendEmail} className="contact-form">
             <div className="input-wrapper">
               <User className="form-icon" size={18} />
-              <input type="text" name="from_name" placeholder="Your Name" required disabled={loading} />
+              <input type="text" name="from_name" placeholder="Your Name" autoComplete="name" required disabled={loading} />
             </div>
 
             <div className="input-wrapper">
               <Mail className="form-icon" size={18} />
-              <input type="email" name="from_email" placeholder="Your Email Address" required disabled={loading} />
+              <input type="email" name="from_email" placeholder="Your Email Address" autoComplete="email" required disabled={loading} />
             </div>
 
             <div className="input-wrapper text-area-wrapper">
-              <textarea name="message" placeholder="Your Message..." rows="6" required disabled={loading} />
+              <textarea name="message" placeholder="Your Message..." rows="6" autoComplete="off" required disabled={loading} />
             </div>
 
             {/* DYNAMIC RECAPTCHA COMPONENT */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <div className="turnstile-container">
               <Turnstile
-                key={isDark ? 'dark-mode' : 'light-mode'} /* Forces reload on theme change */
-                theme={isDark ? 'dark' : 'light'}         /* Sets the visual theme */
+                options={{
+                  theme: isDark ? 'dark' : 'light',
+                }}
                 siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
                 onSuccess={(token) => setTurnstileToken(token)}
                 ref={turnstileRef}

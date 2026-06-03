@@ -92,7 +92,7 @@ export default function Home() {
         </div><br/><br/><br/><br/><br/><br/>
 
         <div className="hero-buttons">
-              <a href={import.meta.env.BASE_URL + 'Mughees_resume.pdf'} download="Mughees_resume.pdf" className="btn" target="_blank" rel="noopener noreferrer">
+              <a href={import.meta.env.BASE_URL + 'MuhammadMughees_Resume.pdf'} download="MuhammadMughees_Resume.pdf" className="btn" target="_blank" rel="noopener noreferrer">
                 <FaDownload /><span style={{marginLeft:'15px'}}> Download Resume</span>
               </a>
               <Link to="/contact" className="btn btn-outline"><FaPhone /><span style={{marginLeft:'15px'}}> Contact Me</span></Link>

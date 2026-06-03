@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import ReCAPTCHA from "react-google-recaptcha";
+import { Turnstile } from '@marsidev/react-turnstile'; // UPDATED IMPORT
 import { Mail, User, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import './contact.css';
 import './Pages.css';
@@ -7,28 +7,22 @@ import Footer from '../components/Footer';
 
 export default function Contact() {
   const formRef = useRef();
-  const recaptchaRef = useRef(); 
+  
+  // NEW: State to hold the Turnstile token
+  const [turnstileToken, setTurnstileToken] = useState(''); 
+  const turnstileRef = useRef();
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ type: '', message: '' });
-
-  // NEW: State to track dark mode
   const [isDark, setIsDark] = useState(false);
 
-  // NEW: Effect to watch for theme changes automatically
   useEffect(() => {
     const checkTheme = () => {
-      // If the HTML tag has 'light-theme', it is light mode. Otherwise, it is dark mode.
       const isLightMode = document.documentElement.classList.contains('light-theme');
       setIsDark(!isLightMode);
     };
-
-    // Initial check when the component first loads
     checkTheme();
-
-    // Watch the <html> tag for any changes to its 'class' attribute
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
     return () => observer.disconnect();
   }, []);
 
@@ -37,12 +31,9 @@ export default function Contact() {
     setLoading(true);
     setAlert({ type: '', message: '' });
 
-    // 1. Grab the reCAPTCHA token
-    const recaptchaToken = recaptchaRef.current.getValue();
-    
-    // 2. Stop the submission if they haven't checked the box
-    if (!recaptchaToken) {
-      setAlert({ type: 'error', message: 'Please check the reCAPTCHA box to prove you are human.' });
+    // Stop submission if they haven't passed Turnstile
+    if (!turnstileToken) {
+      setAlert({ type: 'error', message: 'Please complete the security check to prove you are human.' });
       setLoading(false);
       return;
     }
@@ -52,7 +43,7 @@ export default function Contact() {
       from_name: formData.get('from_name'),
       from_email: formData.get('from_email'),
       message: formData.get('message'),
-      recaptchaToken: recaptchaToken // Send token to backend for verification
+      recaptchaToken: turnstileToken // Sent as recaptchaToken so backend doesn't break
     };
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -72,7 +63,7 @@ export default function Contact() {
           message: 'Message sent successfully! Check your Email inbox for a confirmation.'
         });
         formRef.current.reset();
-        recaptchaRef.current.reset(); // Reset checkbox after success
+        setTurnstileToken(''); // Clear token on success
       } else {
         throw new Error(data.error || 'Server rejected the application request.');
       }
@@ -82,7 +73,7 @@ export default function Contact() {
         type: 'error',
         message: error.message || 'Oops! Something went wrong. Please try again.'
       });
-      recaptchaRef.current.reset(); // Reset checkbox on error so they can try again
+      setTurnstileToken(''); // Clear token on error to force re-verification
     } finally {
       setLoading(false);
     }
@@ -121,11 +112,12 @@ export default function Contact() {
 
             {/* DYNAMIC RECAPTCHA COMPONENT */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-              <ReCAPTCHA
+              <Turnstile
                 key={isDark ? 'dark-mode' : 'light-mode'} /* Forces reload on theme change */
                 theme={isDark ? 'dark' : 'light'}         /* Sets the visual theme */
-                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                ref={recaptchaRef}
+                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                onSuccess={(token) => setTurnstileToken(token)}
+                ref={turnstileRef}
               />
             </div>
 

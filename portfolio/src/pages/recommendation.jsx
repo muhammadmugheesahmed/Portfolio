@@ -4,7 +4,7 @@ import './recommendation.css';
 import './Pages.css';
 import Footer from '../components/Footer';
 import { supabase } from '../supabaseClient';
-import ReCAPTCHA from "react-google-recaptcha";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const validateEmail = (email) => {
   const cleanEmail = email.trim().toLowerCase();
@@ -13,15 +13,19 @@ const validateEmail = (email) => {
 };
 
 export default function Recommendations() {
-  const recaptchaRef = useRef();
   const [recs, setRecs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitStatus, setSubmitStatus] = useState('');
   const [emailError, setEmailError] = useState('');
   
-  // NEW: State to track dark mode
+  // NEW: Ref to manually control the Turnstile widget (like resetting it)
+  const turnstileRef = useRef(); 
+
+  // NEW: State to hold the Turnstile token
+  const [turnstileToken, setTurnstileToken] = useState(''); 
+  
   const [isDark, setIsDark] = useState(false);
-  console.log("Current theme state isDark:", isDark);
+  
   const [formData, setFormData] = useState({
     name: '',
     designation: '',
@@ -30,25 +34,17 @@ export default function Recommendations() {
     company: '',
   });
 
-  // NEW: Effect to watch for theme changes automatically
   useEffect(() => {
     const checkTheme = () => {
-      // If the HTML tag has 'light-theme', it is light mode. Otherwise, it is dark mode.
       const isLightMode = document.documentElement.classList.contains('light-theme');
       setIsDark(!isLightMode);
     };
-
-    // Initial check when the component first loads
     checkTheme();
-
-    // Watch the <html> tag for any changes to its 'class' attribute
     const observer = new MutationObserver(checkTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
     return () => observer.disconnect();
   }, []);
 
-  // 1. GET Request: Fetch recommendations from Supabase
   const fetchRecommendations = async () => {
     try {
       setLoading(true);
@@ -87,13 +83,8 @@ export default function Recommendations() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // live email validation
     if (name === 'email') {
       if (value && !validateEmail(value)) {
         setEmailError('Invalid email format');
@@ -103,18 +94,15 @@ export default function Recommendations() {
     }
   };
 
-  // 2. POST Request: Send new recommendation to Supabase
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitStatus('Submitting...');
     setEmailError('');
 
-    // 🛑 1. Verify reCAPTCHA on the frontend first
-    const recaptchaToken = recaptchaRef.current.getValue();
-    
-    if (!recaptchaToken) {
+    // 🛑 1. Verify Turnstile on the frontend first
+    if (!turnstileToken) {
       setSubmitStatus('');
-      setEmailError('Please check the reCAPTCHA box to prove you are human.');
+      setEmailError('Please complete the security check to prove you are human.');
       return;
     }
 
@@ -130,7 +118,6 @@ export default function Recommendations() {
       return;
     }
 
-    // 3. Optimistic UI update
     const optimisticRec = {
       id: crypto.randomUUID(),
       ...formData,
@@ -139,7 +126,6 @@ export default function Recommendations() {
 
     setRecs((prev) => [optimisticRec, ...prev]);
 
-    // 4. Insert into Supabase
     const { error } = await supabase
       .from('recommendations')
       .insert([formattedData]);
@@ -147,14 +133,13 @@ export default function Recommendations() {
     if (error) {
       console.error('Error inserting:', error);
       setSubmitStatus('error');
-      
-      // Rollback optimistic UI on error
       setRecs((prev) => prev.filter((rec) => rec.id !== optimisticRec.id));
-      recaptchaRef.current.reset(); // Reset recaptcha so they can try again
+      
+      // Reset the widget so they can try again
+      turnstileRef.current?.reset(); 
+      setTurnstileToken(''); 
     } else {
       setSubmitStatus('success');
-      
-      // Clear form
       setFormData({
         name: '',
         designation: '',
@@ -163,8 +148,10 @@ export default function Recommendations() {
         description: ''
       });
       
-      recaptchaRef.current.reset(); // Reset recaptcha after success
-
+      // Reset the widget after a successful submission
+      turnstileRef.current?.reset(); 
+      setTurnstileToken(''); 
+      
       setTimeout(() => setSubmitStatus(''), 3000);
     }
   };
@@ -178,7 +165,6 @@ export default function Recommendations() {
         </div>
 
         <div className="recommendations-layout">
-          {/* Display List Column */}
           <div className="recs-display-section">
             <h3>Recent Recommendations</h3>
             
@@ -209,79 +195,45 @@ export default function Recommendations() {
             )}
           </div>
 
-          {/* Input Form Column */}
           <div className="recs-form-section">
             <div className="glass-card form-wrapper">
               <h3>Leave a Recommendation</h3>
               <form onSubmit={handleSubmit}>
                 <div className="input-group">
                   <User className="input-icon" />
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Your Full Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="name" placeholder="Your Full Name" value={formData.name} onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Mail className="input-icon" />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your Email Address"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="email" name="email" placeholder="Your Email Address" value={formData.email} onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Building className="input-icon" />
-                  <input
-                    type="text"
-                    name="company"
-                    placeholder="Your Company Name"
-                    value={formData.company}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="company" placeholder="Your Company Name" value={formData.company} onChange={handleChange} required />
                 </div>
 
                 <div className="input-group">
                   <Briefcase className="input-icon" />
-                  <input
-                    type="text"
-                    name="designation"
-                    placeholder="Designation (e.g., Senior Dev)"
-                    value={formData.designation}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="designation" placeholder="Designation (e.g., Senior Dev)" value={formData.designation} onChange={handleChange} required />
                 </div>
 
                 <div className="input-group textarea-group">
-                  <textarea
-                    name="description"
-                    placeholder="Your recommendation text..."
-                    rows="6"
-                    value={formData.description}
-                    onChange={handleChange}
-                    required
-                  />
+                  <textarea name="description" placeholder="Your recommendation text..." rows="6" value={formData.description} onChange={handleChange} required />
                 </div>
 
                 {emailError && <p className="error-text" style={{color: '#ef4444', marginBottom: '10px'}}>{emailError}</p>}
 
-                {/* UPDATED RECAPTCHA HERE */}
+                {/* DYNAMIC TURNSTILE HERE */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                  <ReCAPTCHA
-                    key={isDark ? 'dark-mode' : 'light-mode'} /* Forces reload on theme change */
-                    theme={isDark ? 'dark' : 'light'}         /* Sets the visual theme */
-                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-                    ref={recaptchaRef}
+                  <Turnstile
+                    ref={turnstileRef} // <--- The missing piece!
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    options={{
+                      theme: isDark ? 'dark' : 'light',
+                    }}
                   />
                 </div>
 

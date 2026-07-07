@@ -376,15 +376,16 @@ export default function Home() {
           
           
           <div className="glass-card interactive-card">
-            <h3 className="project-title">Contextual Q&A RAG System</h3>
+            <h3 className="project-title">Context Flow</h3>
             <p className="project-description">
-              An intelligent document search platform utilizing LangChain orchestration, ChromaDB vector storage, and a FastAPI core backend to deliver context-aware answers via a clean web interface.            </p>
+               A full-stack RAG (Retrieval-Augmented Generation) application that allows you to chat with your documents. Upload your files, and the application will build a knowledge base that a powerful language model (Google's Gemini) can use to answer your questions with context-aware responses.          </p>
             <div className="project-tags">
               <span>Python</span>
               <span>LangChain</span>
               <span>FastAPI</span>
               <span>ChromaDB</span>
-              <span>Streamlit</span>
+              <span>React</span>
+              <span>Google Gemini API</span>
             </div>
           </div>
           <div className="glass-card interactive-card">

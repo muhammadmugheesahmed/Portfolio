@@ -5,6 +5,7 @@ import { FaCheck,FaCode,FaGlobe,FaDatabase,FaTools,FaDownload,FaPhone} from 'rea
 import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope,FaChartBar,FaFilePdf} from 'react-icons/fa';
 import { FaHexagonNodes } from 'react-icons/fa6';
 import Footer from '../components/Footer';
+import Projects from '../components/projects';
 
 // 1. Dedicated Home Capsule Sub-Navigation
 const HomeSubNav = () => {
@@ -352,69 +353,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- PROJECTS SECTION --- */}
-      <section id="projects" className="content-section project-bottom-padding">
-        <h2 className="section-title">Featured Projects</h2>
-        <div className="projects-grid-layout">
-          <div className="glass-card interactive-card">
-            <div className="project-tags" >
-                <span className='skill-badge' style={{width:'100%',textAlign:'center',marginBottom:'20px'}}>Final Year Project</span>
-              </div>
-            <h3 className="project-title">Automated HR System</h3>
-  
-            <p className="project-description"> An AI-powered full-stack platform that processes resume uploads using TF-IDF vectorization and an XGBoost model to mathematically rank candidates. It utilizes a decoupled React and MongoDB stack integrated with high-performance FastAPI microservices. The system also hosts an asynchronous conversational chatbot to fully automate new-hire onboarding operations.</p>
-  
-            <div className="project-tags">
-              <span>XGBoost</span>
-              <span>Python</span>
-              <span>FastAPI</span>
-              <span>MongoDB</span>
-              <span>React</span>
-            </div>
-          </div>
-
-          
-          
-          <div className="glass-card interactive-card">
-            <h3 className="project-title">Context Flow</h3>
-            <p className="project-description">
-               A full-stack RAG (Retrieval-Augmented Generation) application that allows you to chat with your documents. Upload your files, and the application will build a knowledge base that a powerful language model (Google's Gemini) can use to answer your questions with context-aware responses.          </p>
-            <div className="project-tags">
-              <span>Python</span>
-              <span>LangChain</span>
-              <span>FastAPI</span>
-              <span>ChromaDB</span>
-              <span>React</span>
-              <span>Google Gemini API</span>
-            </div>
-          </div>
-          <div className="glass-card interactive-card">
-            <h3 className="project-title">Portfolio API Backend</h3>
-            <p className="project-description">
-              A secure REST API built using Django REST Framework featuring custom endpoints, user validation, and comprehensive CORS configurations.
-            </p>
-            <div className="project-tags">
-              <span>Django</span>
-              <span>Python</span>
-              <span>DRF</span>
-              <span>React</span>
-            </div>
-          </div>
-          <div className="glass-card interactive-card">
-            <h3 className="project-title">Cafe Management System</h3>
-            <p className="project-description">
-              A terminal-based management application utilizing custom-built doubly linked list structures to seamlessly simulate operational food menus, billing queues, and live order processing.</p>
-            <div className="project-tags">
-              <span>C++</span>
-              <span>Data Structures</span>
-              <span>OOP</span>
-            </div>
-          </div>
-        </div>
-        
-        
-        
-      </section>
+      <Projects />
       
       <Footer />
     </div>

@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './projects.css';
 import { FaGithub} from 'react-icons/fa';
 
+// 1. Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
 
+// 2. Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
-const ProjectsSection = () => {
-  // 1. Store projects in an array for easy iteration
-  const projectData = [
+// 3. Import Swiper modules
+import { Navigation, Pagination, A11y } from 'swiper/modules';
+
+const projectData = [
     {
       image: import.meta.env.BASE_URL + '/assets/automated-hr.avif',
       title: "Automated HR System",
@@ -29,122 +36,94 @@ const ProjectsSection = () => {
       description: "A secure REST API built using Django REST Framework featuring custom endpoints, user validation, and comprehensive CORS configurations. Email Configuration on Contact Us with real-time Recommendations.",
       tags: ["Django", "Python", "DRF", "React","Supabase","Netlify"]
     },
+];
 
-  ];
-
-  // 2. Track the active project index
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // 3. Navigation logic with built-in looping
-  // --- Touch Swipe State ---
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
-  const minSwipeDistance = 50; // Minimum distance (in px) to register a swipe
-
-  const nextProject = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % projectData.length);
-  };
-
-  const prevProject = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + projectData.length) % projectData.length);
-  };
-
-  // --- Touch Event Handlers ---
-  const onTouchStart = (e) => {
-    setTouchEnd(null); // Reset touch end to avoid false positives
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe) {
-      nextProject(); // Swipe left goes to next
-    } else if (isRightSwipe) {
-      prevProject(); // Swipe right goes to previous
-    }
-  };
-
-
-  const currentProject = projectData[currentIndex];
-
+const ProjectsSection = () => {
   return (
     <section id="projects" className="content-section project-bottom-padding">
       <h2 className="section-title">Featured Projects</h2>
-      
+
       <div className="carousel-container">
-        
-        <button onClick={prevProject} className="carousel-arrow"
-          aria-label="Previous Project"
+        <Swiper
+          modules={[Navigation, Pagination, A11y]}
+          spaceBetween={50}
+          slidesPerView={1}
+          autoHeight={true} /* FIX 2: Adapts pagination to varying card lengths */
+          navigation={{
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          }}
+          pagination={{ 
+            el: '.swiper-pagination',
+            clickable: true 
+          }}
+          grabCursor={true}
+          loop={true}
+          className="mySwiper"
+          breakpoints={{
+            /* FIX 4: Swiping works on mobile, but disables dragging on desktops (relies on arrows) */
+            0: {
+              allowTouchMove: true, 
+            },
+            768: {
+              allowTouchMove: false, 
+            }
+          }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
+          {projectData.map((project, index) => (
+            <SwiperSlide key={index}>
+              <div className="carousel-slide-content">
+                <div className="glass-card interactive-card stacked-card project-card-main">
+                  {project.badge && (
+                    <div className="project-tags">
+                      <span className='skill-badge project-badge'>
+                        {project.badge}
+                      </span>
+                    </div>
+                  )}
 
-        {/* Active Project Card - Landscape Mode */}
-        <div className="glass-card interactive-card stacked-card project-card-main">
+                  {project.image && (
+                    <div className="project-image-container">
+                      <img
+                        className="project-image"
+                        src={project.image}
+                        alt={project.title}
+                      />
+                    </div>
+                  )}
+
+                  <div className="project-content">
+                    <h3 className="project-title">{project.title}</h3>
+                    <p className="project-description">{project.description}</p>
+                    <p className="project-links">
+                      <FaGithub />
+                      <a href={project.url} rel="noopener noreferrer" target="_blank">
+                        <span>View on GitHub</span>
+                      </a>
+                    </p>
+
+                    <div className="project-tags project-tags-bottom">
+                      {project.tags.map((tag, tagIndex) => (
+                        <span key={tagIndex}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
           
-          {currentProject.badge && (
-            <div className="project-tags">
-              <span className='skill-badge project-badge'>
-                {currentProject.badge}
-              </span>
-            </div>
-          )}
-          
-          {currentProject.image && (
-            <div className="project-image-container">
-               <img 
-               className="project-image" 
-               src={currentProject.image} 
-               alt={currentProject.title} 
-               />
-            </div>
-        )}
-
-        <div className="project-content">
-          <h3 className="project-title">{currentProject.title}</h3>
-          
-          <p className="project-description">{currentProject.description}</p>
-          <p className="project-links" ><FaGithub />  <a href={currentProject.url} rel="noopener noreferrer" target="_blank"> <span>View on GitHub</span></a></p>
-
-          <div className="project-tags project-tags-bottom">
-
-            {currentProject.tags.map((tag, index) => (
-              <span key={index}>{tag}</span>
-            ))}
+          {/* Custom Navigation Buttons */}
+          <div className="swiper-button-prev carousel-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
           </div>
-        </div>
-        </div>
-
-        <button onClick={nextProject} className="carousel-arrow"
-          aria-label="Next Project"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-
-      </div>
-      
-      {/* Optional: Indicator dots to show position in loop */}
-      <div className="carousel-dots">
-        {projectData.map((_, index) => (
-          <div 
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
-          />
-        ))}
+          <div className="swiper-button-next carousel-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+          </div>
+          
+          {/* Custom Pagination Container */}
+          <div className="swiper-pagination"></div>
+        </Swiper>
       </div>
     </section>
   );

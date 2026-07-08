@@ -1,10 +1,9 @@
 /* Carousel Container */
 .carousel-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
     width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
 }
 
 /* Carousel Arrow Buttons */
@@ -12,19 +11,17 @@
     cursor: pointer;
     padding: 7px;
     border: none;
-    color:--var(accent);
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent) !important; /* FIX 3: Force arrow color to accent */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.3s ease;
-    flex-shrink: 0; /* Prevents arrows from shrinking */
+    flex-shrink: 0;
+    z-index: 10;
 }
 
-.carousel-arrow:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
+
 
 /* Main Project Card */
 .project-card-main {
@@ -62,66 +59,101 @@
     margin-top: auto;
 }
 
-/* Carousel Indicator Dots */
-.carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.carousel-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.carousel-dot.active {
-    background: rgba(255, 255, 255, 0.8);
-}
-
 /* --- ADD THIS FOR LIGHT THEME --- */
-.light-theme .carousel-dot {
-    background: rgba(0, 0, 0, 0.2); /* Faded black dots */
-}
-
-.light-theme .carousel-dot.active {
-    background: rgba(0, 0, 0, 0.7); /* Solid black */
-}
-
 .project-links{
     align-items: center;
     margin-bottom: 30px;
     display: flex;
     align-items: center;
-
 }
 .project-links span{
     margin-left: 8px;
 }
-
 .project-links a{
     color: #10b981;
 }
+
+/* --- Swiper Overrides & Custom Styles --- */
+
+.mySwiper {
+    width: 100%;
+    /* Provides consistent spacing for flexible pagination */
+}
+
+.carousel-slide-content {
+    padding: 0 10px 50px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Custom Pagination */
+.swiper-pagination {
+    /* FIX 2: Removed 'bottom: 0 !important' to allow natural flow below auto-height cards */
+    position: flex;
+    bottom:5px;
+}
+.swiper-pagination-bullet {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 1;
+    display: inline-block; /* Changed from flex to inline-block for standard Swiper behavior */
+}
+
+/* FIX 3: Change Pagination color to accent */
+.swiper-pagination-bullet-active {
+    background: var(--accent) !important; 
+}
+
+/* Light Theme Pagination */
+.light-theme .swiper-pagination-bullet {
+    background: rgba(0, 0, 0, 0.2);
+}
+.light-theme .swiper-pagination-bullet-active {
+    background: var(--accent) !important; /* Keep accent visible on light theme */
+}
+
+/* Custom Navigation Arrows Position */
+.swiper-button-prev, .swiper-button-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+}
+
+.swiper-button-prev {
+    left: -10px;
+}
+
+.swiper-button-next {
+    right: -10px;
+}
+
+/* Hide default Swiper arrow pseudo-elements */
+.swiper-button-next::after, .swiper-button-prev::after {
+    display: none;
+}
+
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
-    /* Hide the arrows on touch devices */
+    /* FIX 1: Absolutely ensures arrows do not display on mobile screens */
+    .swiper-button-prev, 
+    .swiper-button-next,
     .carousel-arrow {
-        display: none;
+        display: none !important; 
+        cursor:pointer;
+    
     }
 
-    /* Remove the gap since the arrows are gone */
-    .carousel-container {
-        gap: 0;
+    .carousel-slide-content {
+        padding: 0;
     }
 
-    /* Ensure the card takes up full available width */
     .project-card-main {
         width: 100%;
         max-width: 100%;
-        margin: 0; 
+        margin: 0;
     }
 }

@@ -122,9 +122,12 @@ const ProjectsSection = () => {
           </div>
           
           {/* Custom Pagination Container */}
+          
           <div className="swiper-pagination"></div>
         </Swiper>
+
       </div>
+
     </section>
   );
 };

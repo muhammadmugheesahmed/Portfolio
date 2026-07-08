@@ -19,6 +19,7 @@
     transition: background 0.3s ease;
     flex-shrink: 0;
     z-index: 10;
+    
 }
 
 
@@ -89,26 +90,26 @@
 
 /* Custom Pagination */
 .swiper-pagination {
-    /* FIX 2: Removed 'bottom: 0 !important' to allow natural flow below auto-height cards */
-    position: flex;
-    bottom:5px;
+    position: absolute;
+    bottom: 15px !important; /* Position dots consistently at the bottom */
+    left: 0;
+    right: 0;
 }
-.swiper-pagination-bullet {
+/* Make the rule more specific to override Swiper's default opacity on inactive bullets */
+.mySwiper .swiper-pagination-bullet {
     width: 8px;
     height: 8px;
-    background: rgba(255, 255, 255, 0.3);
-    opacity: 1;
-    display: inline-block; /* Changed from flex to inline-block for standard Swiper behavior */
+    background-color: rgba(255, 255, 255, 0.5); /* A slightly more opaque white for dark mode */
+    opacity: 1 !important; /* Force opacity to 1 to prevent Swiper from hiding it */
 }
 
-/* FIX 3: Change Pagination color to accent */
 .swiper-pagination-bullet-active {
     background: var(--accent) !important; 
 }
 
 /* Light Theme Pagination */
 .light-theme .swiper-pagination-bullet {
-    background: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.3); /* Visible on light backgrounds */
 }
 .light-theme .swiper-pagination-bullet-active {
     background: var(--accent) !important; /* Keep accent visible on light theme */
@@ -119,7 +120,6 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--accent);
 }
 
 .swiper-button-prev {
@@ -129,6 +129,7 @@
 .swiper-button-next {
     right: -10px;
 }
+
 
 /* Hide default Swiper arrow pseudo-elements */
 .swiper-button-next::after, .swiper-button-prev::after {
@@ -149,6 +150,8 @@
 
     .carousel-slide-content {
         padding: 0;
+        margin-bottom: 50px;
+
     }
 
     .project-card-main {

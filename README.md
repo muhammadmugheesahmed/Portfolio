@@ -10,9 +10,7 @@ A modern, responsive, and feature-rich personal portfolio built with React and V
 
 **Live Demo:** [Muhammad Mughees Ahmed](https://muhammadmugheesahmed.github.io/Portfolio/)
 
----
 
-Replace the placeholder above with a screenshot of your live portfolio)*
 
 ## ✨ Features
 

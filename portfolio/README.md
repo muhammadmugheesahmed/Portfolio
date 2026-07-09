@@ -5,14 +5,14 @@
 ![Swiper](https://img.shields.io/badge/Swiper-6332F6?style=for-the-badge&logo=swiper&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 
+
 A modern, responsive, and feature-rich personal portfolio built with React and Vite. This project showcases my featured work through a sleek, interactive carousel and is designed with a mobile-first approach.
 
-**Live Demo:** [your-portfolio-url.com](https://your-portfolio-url.com)
+**Live Demo:** [Muhammad Mughees Ahmed](https://muhammadmugheesahmed.github.io/Portfolio/)
 
 ---
 
-![Portfolio Screenshot](https://via.placeholder.com/1200x600.png?text=Your+Portfolio+Screenshot+Here)
-*(Replace the placeholder above with a screenshot of your live portfolio)*
+Replace the placeholder above with a screenshot of your live portfolio)*
 
 ## ✨ Features
 
@@ -66,6 +66,6 @@ Make sure you have Node.js and npm installed on your machine.
 
 **Muhammad Mughees Ahmed**
 
--   **GitHub**: @muhammadmugheesahmed
--   **LinkedIn**: Your LinkedIn Profile
+-   **GitHub**: [muhammadmugheesahmed](https://github.com/muhammadmugheesahmed)
+-   **LinkedIn**: [Muhammad Mughees Ahmed](https://www.linkedin.com/in/mughees-ahmed-feb2003/)
 
